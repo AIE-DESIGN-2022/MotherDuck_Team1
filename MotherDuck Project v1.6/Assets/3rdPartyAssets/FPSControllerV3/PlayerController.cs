@@ -153,22 +153,7 @@ public class PlayerController : MonoBehaviour {
         /////
         ///
 
-        if (gameObject.GetComponent<TimeRecorder>().playerNumber == 1)
-        {
-            if (canJump && isGrounded && (XCI.GetButton(XboxButton.A, controllerNumber) || Input.GetKeyDown(KeyCode.Space)))
-            {
-                GetComponent<Rigidbody>().velocity = new Vector3(velocity.x, Mathf.Sqrt(2 * jumpHeight * gravity), velocity.z);
-                isGrounded = false;
-            }
-        }
-        if (gameObject.GetComponent<TimeRecorder>().playerNumber == 2)
-        {
-            if (canJump && isGrounded && (XCI.GetButton(XboxButton.A, controllerNumber) || Input.GetKeyDown(KeyCode.RightControl)))
-            {
-                GetComponent<Rigidbody>().velocity = new Vector3(velocity.x, Mathf.Sqrt(2 * jumpHeight * gravity), velocity.z);
-                isGrounded = false;
-            }
-        }
+
 
         // apply gravity
         GetComponent<Rigidbody>().AddForce(new Vector3 (0, -gravity * GetComponent<Rigidbody>().mass, 0));
@@ -196,16 +181,38 @@ public class PlayerController : MonoBehaviour {
 			ResetPlayer ();
 		}
 
-//		if (Input.GetKeyDown (KeyCode.N)) {
-//			
-//			if(!testBoolSpeedOnDuckage){
-//				testBoolSpeedOnDuckage = true;
-//				Debug.Log ("Speed change on Duckage on");
-//			} else {
-//				testBoolSpeedOnDuckage = false;
-//				Debug.Log ("Speed change on Duckage off");
-//			}
-//		}
+		//		if (Input.GetKeyDown (KeyCode.N)) {
+		//			
+		//			if(!testBoolSpeedOnDuckage){
+		//				testBoolSpeedOnDuckage = true;
+		//				Debug.Log ("Speed change on Duckage on");
+		//			} else {
+		//				testBoolSpeedOnDuckage = false;
+		//				Debug.Log ("Speed change on Duckage off");
+		//			}
+		//		}
+		if (gameObject.GetComponent<TimeRecorder>().playerNumber == 1)
+		{
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				if (CheckGrounded())
+				{
+					GetComponent<Rigidbody>().velocity = new Vector3(0, Mathf.Sqrt(2 * jumpHeight * gravity), 0);
+					isGrounded = false;
+				}
+			}
+		}
+		if (gameObject.GetComponent<TimeRecorder>().playerNumber == 2)
+		{
+			if (Input.GetKeyDown(KeyCode.RightControl))
+			{
+				if (CheckGrounded())
+				{
+					GetComponent<Rigidbody>().velocity = new Vector3(0, Mathf.Sqrt(2 * jumpHeight * gravity), 0);
+					isGrounded = false;
+				}
+			}
+		}
 	}
 
 	private void MoveHead()
@@ -288,7 +295,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 		
-	private void CheckGrounded() 
+	private bool CheckGrounded() 
 	{
         /* ==============
          * REMEMBER
@@ -302,16 +309,25 @@ public class PlayerController : MonoBehaviour {
          * confused and the player can jump really high
          * when in a corner between 2 walls for example.
          */
-        float rayLength = 1f;
+        float rayLength = 2f;
         RaycastHit hit;
         Ray ray = new Ray(transform.position, -transform.up);
  		Debug.DrawRay(ray.origin, ray.direction * rayLength);
         // if there is something directly below the player
         if (Physics.Raycast(ray, out hit, rayLength)) {
 			if (hit.transform.tag != "duck") {
-				isGrounded = true;
+				return true;
+				//isGrounded = true;
 			}
+            else
+            {
+				return false;
+            }
         }
+		else
+		{
+			return false;
+		}
 	}
 
 
